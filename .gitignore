@@ -34,6 +34,11 @@ ENV/
 *~
 .DS_Store
 
+# Node.js
+nodejs/
+node_modules/
+package-lock.json
+
 # OS Files
 desktop.ini
 Thumbs.db
