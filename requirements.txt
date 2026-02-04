@@ -1,0 +1,21 @@
+# Core Dependencies
+streamlit>=1.31.0
+pandas>=2.1.0
+plotly>=5.18.0
+regex>=2023.10.3
+
+# Excel/CSV Export
+openpyxl>=3.1.2
+xlsxwriter>=3.1.9
+
+# PDF Export (optional)
+reportlab>=4.0.7
+weasyprint>=60.1
+
+# Database (Cloud & Local)
+sqlalchemy>=2.0.25
+psycopg2-binary>=2.9.9
+
+# Additional utilities
+python-dateutil>=2.8.2
+pytz>=2023.3

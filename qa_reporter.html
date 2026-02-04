@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVA Health - QA Gate Weekly Reporter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #495057;
+            transition: all 0.3s;
+            border: none;
+            background: transparent;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .entry-list {
+            margin-top: 20px;
+        }
+
+        .entry-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .entry-title {
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .entry-date {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .entry-details {
+            color: #495057;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .report-output {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            max-height: 600px;
+            overflow-y: auto;
+            border: 2px solid #dee2e6;
+        }
+
+        .blockers-section {
+            margin-top: 15px;
+        }
+
+        .blocker-tag {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .blocker-tag.selected {
+            background: #764ba2;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .failure-mode-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .failure-mode-tag {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .failure-mode-tag.selected {
+            background: #c82333;
+            font-weight: bold;
+        }
+
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: #e7f1ff;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔬 SAVA Health QA Gate Reporter</h1>
+            <p>Track your QA gates, blockers, and generate weekly reports</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('log-gate')">Log QA Gate</button>
+            <button class="tab" onclick="switchTab('log-ticket')">Log Ticket</button>
+            <button class="tab" onclick="switchTab('import-data')">Import Data</button>
+            <button class="tab" onclick="switchTab('view-data')">View Data</button>
+            <button class="tab" onclick="switchTab('generate-report')">Generate Report</button>
+        </div>
+
+        <div class="content">
+            <!-- Log QA Gate Tab -->
+            <div id="log-gate" class="tab-content active">
+                <h2>Log QA Gate Completion</h2>
+                <form id="gateForm" onsubmit="logQAGate(event)">
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="gateDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Gate Type</label>
+                            <select id="gateType" required>
+                                <option value="">Select gate type...</option>
+                                <option value="Dispensing (LN-Q)">Dispensing (LN-Q)</option>
+                                <option value="Screen Printing (LN-P)">Screen Printing (LN-P)</option>
+                                <option value="Outer Layer (LN-R)">Outer Layer (LN-R)</option>
+                                <option value="Final Inspection (LN-C)">Final Inspection (LN-C)</option>
+                                <option value="In Vitro (LN-AX)">In Vitro (LN-AX)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lot Number</label>
+                        <input type="text" id="lotNumber" placeholder="e.g., LN-Q12345" required>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label>Time Spent (hours)</label>
+                            <input type="number" id="timeSpent" step="0.25" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>SME Review Cycles</label>
+                            <input type="number" id="smeCycles" min="1" value="1" required>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label>Total Sensors Reviewed</label>
+                            <input type="number" id="totalSensors" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Sensors Accepted</label>
+                            <input type="number" id="acceptedSensors" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group blockers-section">
+                        <label>Blockers Encountered (click to select)</label>
+                        <div id="blockersContainer"></div>
+                    </div>
+
+                    <div class="form-group failure-mode-section">
+                        <label>Failure Modes (click to select all that apply)</label>
+                        <div id="failureModesContainer"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Notes</label>
+                        <textarea id="notes" placeholder="Any additional comments or observations..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">✓ Log QA Gate</button>
+                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                </form>
+            </div>
+
+            <!-- Log Ticket Tab -->
+            <div id="log-ticket" class="tab-content">
+                <h2>Log Ticket Submission</h2>
+                <form id="ticketForm" onsubmit="logTicket(event)">
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label>Date</label>
+                            <input type="date" id="ticketDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Ticket ID</label>
+                            <input type="text" id="ticketId" placeholder="e.g., JIRA-1234" required>
+                        </div>
+                    </div>
+
+                    <div class="two-col">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="ticketCategory" required>
+                                <option value="">Select category...</option>
+                                <option value="Imaging System">Imaging System</option>
+                                <option value="Steel Mountain">Steel Mountain</option>
+                                <option value="QCI Clarification">QCI Clarification</option>
+                                <option value="Process Improvement">Process Improvement</option>
+                                <option value="Equipment Issue">Equipment Issue</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="ticketStatus" required>
+                                <option value="Open">Open</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Resolved">Resolved</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Assigned To</label>
+                        <input type="text" id="assignedTo" placeholder="Team or person name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="ticketDescription" placeholder="Brief description of the issue..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">✓ Log Ticket</button>
+                    <button type="reset" class="btn btn-secondary">Clear Form</button>
+                </form>
+            </div>
+
+            <!-- Import Data Tab -->
+            <div id="import-data" class="tab-content">
+                <h2>Import QA Gate Data</h2>
+                <div class="alert alert-info">
+                    <strong>📁 Supported formats:</strong> CSV, Excel (.xlsx, .xls), PDF (lot reports)<br>
+                    <strong>What gets imported:</strong> Lot numbers, dates, sensor counts, yield data, and failure information
+                </div>
+
+                <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📤</div>
+                    <h3>Click to upload or drag & drop files here</h3>
+                    <p>CSV, Excel, or PDF files accepted</p>
+                </div>
+                <input type="file" id="fileInput" class="file-input" accept=".csv,.xlsx,.xls,.pdf" multiple onchange="handleFileUpload(event)">
+
+                <div id="importStatus"></div>
+                <div id="importPreview"></div>
+            </div>
+
+            <!-- View Data Tab -->
+            <div id="view-data" class="tab-content">
+                <h2>Recent Activity</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total QA Gates</div>
+                        <div class="stat-value" id="totalGatesCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Time (hours)</div>
+                        <div class="stat-value" id="totalTimeCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Tickets</div>
+                        <div class="stat-value" id="totalTicketsCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Avg Yield %</div>
+                        <div class="stat-value" id="avgYieldCount">0%</div>
+                    </div>
+                </div>
+
+                <h3>Recent QA Gates</h3>
+                <div id="recentGates" class="entry-list"></div>
+
+                <h3 style="margin-top: 30px;">Recent Tickets</h3>
+                <div id="recentTickets" class="entry-list"></div>
+
+                <button onclick="exportData()" class="btn btn-secondary" style="margin-top: 20px;">📥 Export All Data (JSON)</button>
+                <button onclick="clearAllData()" class="btn btn-secondary" style="margin-top: 20px; background: #dc3545;">🗑️ Clear All Data</button>
+            </div>
+
+            <!-- Generate Report Tab -->
+            <div id="generate-report" class="tab-content">
+                <h2>Generate Weekly Report</h2>
+                <div class="alert alert-info">
+                    Select the end date for your report. The system will automatically include data from the past 7 days.
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="reportEndDate">
+                </div>
+
+                <button onclick="generateReport()" class="btn btn-primary">📊 Generate Report</button>
+                <button onclick="downloadReport()" class="btn btn-secondary">💾 Download Report</button>
+
+                <div id="reportContainer" style="margin-top: 30px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Common blockers from your documents
+        const COMMON_BLOCKERS = [
+            'SME review delay',
+            'Imaging files not available on SharePoint',
+            'QCI deviation - awaiting approval',
+            'Steel Mountain upload issues',
+            'Lot report generation delay',
+            'Multiple lots requiring individual uploads',
+            'Unclear failure criteria',
+            'SME added/removed sensors - rework needed',
+            'In vitro data not available',
+            'Power BI data loading issues'
+        ];
+
+        // Failure modes from your QA documents
+        const FAILURE_MODES = {
+            'Dispensing': [
+                'Poor Dispense',
+                'Merging Spots',
+                'Spots on Dielectric',
+                'Coffee Rings',
+                'Faint Spots',
+                'Non-centralized Spots',
+                'No Osmium Dispensed',
+                'Fibre',
+                'Lumps',
+                'Background Measurement Interference',
+                'Blurry Imaging',
+                'Dispensed Surface Area',
+                'SME Review',
+                'Sensor Removed'
+            ],
+            'Screen Printing': [
+                'Print Incomplete or Missing',
+                'Excessive Ink or Lumps',
+                'Fibre',
+                'Bent Tab',
+                'Sensor Removed',
+                'Background Measurement Interference',
+                'No Measurements',
+                'Missing Images',
+                'Bent Sheet - Blurry Images',
+                'SME Review',
+                'Measurement Error',
+                'Height',
+                'Bent Sheet',
+                'Bent Needle',
+                'Sheet Damage'
+            ],
+            'Outer Layer': [
+                'Mean WE Thickness',
+                'Max Thickness',
+                'Two Needles Shown on Image',
+                'Bent Needle',
+                'Fibre',
+                'Lumps',
+                'Missing Image',
+                'Sensor Removed',
+                'Measurement Error'
+            ],
+            'Final Inspection': [
+                'Fibres',
+                'Debris',
+                'Contamination',
+                'Damaged Needle',
+                'Angled Needle',
+                'Bent Needle',
+                'Adhesive touching the needle',
+                'Adhesive Misaligned',
+                'Final Inspection not Ingested',
+                'Adhesive Inspection not Ingested',
+                'OL Lumps / Bulging Needle',
+                'Bad Print',
+                'Silver Overprint',
+                'Dielectric Overprint',
+                'Crystalized OL'
+            ],
+            'In Vitro': [
+                'Gross Failures'
+            ]
+        };
+
+        let selectedBlockers = [];
+        let selectedFailureModes = [];
+        let currentGateType = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set today's date as default
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('gateDate').value = today;
+            document.getElementById('ticketDate').value = today;
+            document.getElementById('reportEndDate').value = today;
+
+            // Initialize blockers
+            renderBlockers();
+
+            // Setup gate type change listener
+            document.getElementById('gateType').addEventListener('change', function(e) {
+                currentGateType = e.target.value;
+                renderFailureModes();
+            });
+
+            // Setup drag and drop
+            setupDragAndDrop();
+
+            // Load and display data
+            updateViewData();
+        });
+
+        // Render blocker tags
+        function renderBlockers() {
+            const container = document.getElementById('blockersContainer');
+            container.innerHTML = COMMON_BLOCKERS.map(blocker => 
+                `<span class="blocker-tag" onclick="toggleBlocker('${blocker}')">${blocker}</span>`
+            ).join('');
+        }
+
+        // Render failure modes based on gate type
+        function renderFailureModes() {
+            const container = document.getElementById('failureModesContainer');
+            
+            if (!currentGateType) {
+                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">Select a gate type first to see relevant failure modes</p>';
+                return;
+            }
+
+            // Extract the gate type name (e.g., "Dispensing" from "Dispensing (LN-Q)")
+            const gateTypeName = currentGateType.split('(')[0].trim();
+            const modes = FAILURE_MODES[gateTypeName] || [];
+
+            if (modes.length === 0) {
+                container.innerHTML = '<p style="color: #6c757d; font-size: 14px;">No predefined failure modes for this gate type</p>';
+                return;
+            }
+
+            container.innerHTML = modes.map(mode => 
+                `<span class="failure-mode-tag" onclick="toggleFailureMode('${mode.replace(/'/g, "\\'")}')">${mode}</span>`
+            ).join('');
+        }
+
+        function toggleBlocker(blocker) {
+            const index = selectedBlockers.indexOf(blocker);
+            if (index > -1) {
+                selectedBlockers.splice(index, 1);
+            } else {
+                selectedBlockers.push(blocker);
+            }
+            
+            // Update UI
+            const tags = document.querySelectorAll('.blocker-tag');
+            tags.forEach(tag => {
+                if (selectedBlockers.includes(tag.textContent)) {
+                    tag.classList.add('selected');
+                } else {
+                    tag.classList.remove('selected');
+                }
+            });
+        }
+
+        function toggleFailureMode(mode) {
+            const index = selectedFailureModes.indexOf(mode);
+            if (index > -1) {
+                selectedFailureModes.splice(index, 1);
+            } else {
+                selectedFailureModes.push(mode);
+            }
+            
+            // Update UI
+            const tags = document.querySelectorAll('.failure-mode-tag');
+            tags.forEach(tag => {
+                if (selectedFailureModes.includes(tag.textContent)) {
+                    tag.classList.add('selected');
+                } else {
+                    tag.classList.remove('selected');
+                }
+            });
+        }
+
+        // Tab switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            if (tabId === 'view-data') {
+                updateViewData();
+            }
+        }
+
+        // Setup drag and drop
+        function setupDragAndDrop() {
+            const uploadArea = document.getElementById('uploadArea');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                handleFiles(files);
+            });
+        }
+
+        // Handle file upload
+        function handleFileUpload(event) {
+            const files = event.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            const statusDiv = document.getElementById('importStatus');
+            const previewDiv = document.getElementById('importPreview');
+            
+            statusDiv.innerHTML = '<div class="alert alert-info">Processing files...</div>';
+            previewDiv.innerHTML = '';
+
+            Array.from(files).forEach(file => {
+                const fileType = file.name.split('.').pop().toLowerCase();
+                
+                if (fileType === 'csv') {
+                    parseCSV(file);
+                } else if (fileType === 'xlsx' || fileType === 'xls') {
+                    statusDiv.innerHTML = '<div class="alert alert-info">Excel files detected. Reading data...</div>';
+                    parseExcel(file);
+                } else if (fileType === 'pdf') {
+                    statusDiv.innerHTML = '<div class="alert alert-info">PDF detected. Extracting text...</div>';
+                    parsePDF(file);
+                } else {
+                    statusDiv.innerHTML = '<div class="alert" style="background: #f8d7da; color: #721c24;">Unsupported file type. Please upload CSV, Excel, or PDF.</div>';
+                }
+            });
+        }
+
+        // Parse CSV
+        function parseCSV(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                const headers = lines[0].split(',').map(h => h.trim());
+                
+                const importedData = [];
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    
+                    const values = lines[i].split(',');
+                    const row = {};
+                    headers.forEach((header, index) => {
+                        row[header] = values[index]?.trim() || '';
+                    });
+                    importedData.push(row);
+                }
+                
+                processImportedData(importedData, 'CSV');
+            };
+            reader.readAsText(file);
+        }
+
+        // Parse Excel (using SheetJS library)
+        function parseExcel(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Check if this looks like a Lot Report Review file
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
+                    
+                    // Try to detect if it's a lot report format
+                    if (isLotReportFormat(jsonData, file.name)) {
+                        parseLotReport(jsonData, file.name);
+                    } else {
+                        // Standard format
+                        const standardData = XLSX.utils.sheet_to_json(firstSheet);
+                        processImportedData(standardData, 'Excel');
+                    }
+                } catch (error) {
+                    document.getElementById('importStatus').innerHTML = 
+                        '<div class="alert" style="background: #f8d7da; color: #721c24;">Error reading Excel file: ' + error.message + '</div>';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Check if Excel file is a Lot Report format
+        function isLotReportFormat(data, filename) {
+            // Check filename pattern (LNQ, LNP, LNR, LNC, LNAX followed by numbers)
+            const lotPattern = /LN[A-Z]+\d+/i;
+            if (lotPattern.test(filename)) return true;
+            
+            // Check for typical lot report headers/structure
+            const flatData = data.flat().map(cell => String(cell).toLowerCase());
+            const hasLotKeywords = flatData.some(cell => 
+                cell.includes('sensor') || 
+                cell.includes('pass') || 
+                cell.includes('fail') ||
+                cell.includes('unit') ||
+                cell.includes('dispensing') ||
+                cell.includes('screen print') ||
+                cell.includes('outer layer')
+            );
+            
+            return hasLotKeywords;
+        }
+
+        // Parse Lot Report Excel files
+        function parseLotReport(data, filename) {
+            const statusDiv = document.getElementById('importStatus');
+            const previewDiv = document.getElementById('importPreview');
+            
+            statusDiv.innerHTML = '<div class="alert alert-info">Analyzing lot report format...</div>';
+            
+            // Extract lot number from filename
+            const lotMatch = filename.match(/LN[A-Z]+\d+/i);
+            const lotNumber = lotMatch ? lotMatch[0].toUpperCase() : 'UNKNOWN';
+            
+            // Determine gate type from lot number prefix
+            let gateType = '';
+            if (lotNumber.includes('LNQ') || lotNumber.includes('LN-Q')) {
+                gateType = 'Dispensing (LN-Q)';
+            } else if (lotNumber.includes('LNP') || lotNumber.includes('LN-P')) {
+                gateType = 'Screen Printing (LN-P)';
+            } else if (lotNumber.includes('LNR') || lotNumber.includes('LN-R')) {
+                gateType = 'Outer Layer (LN-R)';
+            } else if (lotNumber.includes('LNC') || lotNumber.includes('LN-C')) {
+                gateType = 'Final Inspection (LN-C)';
+            } else if (lotNumber.includes('LNAX') || lotNumber.includes('LN-AX')) {
+                gateType = 'In Vitro (LN-AX)';
+            }
+            
+            // Find sensor data - look for columns with sensor IDs and pass/fail status
+            let sensorColumn = -1;
+            let statusColumn = -1;
+            let headerRow = -1;
+            
+            // Search for headers
+            for (let i = 0; i < Math.min(20, data.length); i++) {
+                const row = data[i];
+                for (let j = 0; j < row.length; j++) {
+                    const cell = String(row[j]).toLowerCase();
+                    
+                    if ((cell.includes('sensor') && cell.includes('id')) || 
+                        cell.includes('unit') || 
+                        cell === 'sensor' ||
+                        cell.includes('sample')) {
+                        sensorColumn = j;
+                        headerRow = i;
+                    }
+                    
+                    if (cell.includes('pass') || 
+                        cell.includes('fail') || 
+                        cell.includes('status') ||
+                        cell.includes('result')) {
+                        statusColumn = j;
+                    }
+                }
+                
+                if (sensorColumn >= 0 && statusColumn >= 0) break;
+            }
+            
+            // If we can't find standard columns, look for sensor patterns in data
+            if (sensorColumn < 0) {
+                for (let i = 0; i < Math.min(50, data.length); i++) {
+                    for (let j = 0; j < data[i].length; j++) {
+                        const cell = String(data[i][j]);
+                        // Look for sensor ID patterns (numbers, or format like S001, Unit001, etc)
+                        if (/^[A-Z]*\d+$/i.test(cell) || /^[A-Z]+-\d+$/i.test(cell)) {
+                            sensorColumn = j;
+                            headerRow = i - 1;
+                            break;
+                        }
+                    }
+                    if (sensorColumn >= 0) break;
+                }
+            }
+            
+            // Count sensors
+            let totalSensors = 0;
+            let passedSensors = 0;
+            let failedSensors = 0;
+            const failureReasons = {};
+            const sensorDetails = [];
+            
+            const startRow = headerRow >= 0 ? headerRow + 1 : 0;
+            
+            for (let i = startRow; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                // Check if this row has a sensor ID
+                const hasSensorData = row.some(cell => {
+                    const str = String(cell);
+                    return str && str.trim() !== '' && 
+                           (str.match(/\d+/) || str.toLowerCase().includes('unit') || str.toLowerCase().includes('sensor'));
+                });
+                
+                if (!hasSensorData) continue;
+                
+                const sensorId = sensorColumn >= 0 ? String(row[sensorColumn]) : `Sensor_${i}`;
+                const status = statusColumn >= 0 ? String(row[statusColumn]).toLowerCase() : '';
+                
+                // Only count if we have a valid sensor ID
+                if (!sensorId || sensorId.trim() === '' || sensorId === 'undefined') continue;
+                
+                totalSensors++;
+                
+                const isPassed = status.includes('pass') || status.includes('accept') || status === 'ok' || status === '1';
+                const isFailed = status.includes('fail') || status.includes('reject') || status.includes('nok') || status === '0';
+                
+                if (isPassed) {
+                    passedSensors++;
+                    sensorDetails.push({ id: sensorId, status: 'PASS' });
+                } else if (isFailed) {
+                    failedSensors++;
+                    
+                    // Try to find failure reason in the row
+                    let reason = 'Unspecified failure';
+                    for (let j = 0; j < row.length; j++) {
+                        const cell = String(row[j]).toLowerCase();
+                        if (cell && j !== statusColumn && j !== sensorColumn) {
+                            // Check if this cell contains a known failure mode
+                            const allFailureModes = Object.values(FAILURE_MODES).flat();
+                            const matchedFailure = allFailureModes.find(mode => 
+                                cell.includes(mode.toLowerCase()) || mode.toLowerCase().includes(cell)
+                            );
+                            
+                            if (matchedFailure) {
+                                reason = matchedFailure;
+                                break;
+                            } else if (cell.includes('fail') || cell.includes('defect') || cell.includes('issue')) {
+                                reason = row[j];
+                                break;
+                            }
+                        }
+                    }
+                    
+                    failureReasons[reason] = (failureReasons[reason] || 0) + 1;
+                    sensorDetails.push({ id: sensorId, status: 'FAIL', reason: reason });
+                } else {
+                    // If no clear pass/fail, try to infer from data
+                    const hasFailureIndicators = row.some(cell => {
+                        const str = String(cell).toLowerCase();
+                        return str.includes('fail') || str.includes('defect') || str.includes('reject') || str.includes('debris') || str.includes('fibre');
+                    });
+                    
+                    if (hasFailureIndicators) {
+                        failedSensors++;
+                        sensorDetails.push({ id: sensorId, status: 'FAIL', reason: 'Detected from data' });
+                    } else {
+                        passedSensors++;
+                        sensorDetails.push({ id: sensorId, status: 'PASS' });
+                    }
+                }
+            }
+            
+            // If we didn't find sensor data, show what we found
+            if (totalSensors === 0) {
+                previewDiv.innerHTML = `
+                    <div class="alert" style="background: #fff3cd; color: #856404;">
+                        <strong>Could not auto-detect sensor data in this lot report.</strong><br><br>
+                        File: ${filename}<br>
+                        Detected Lot Number: ${lotNumber}<br>
+                        Detected Gate Type: ${gateType || 'Unknown'}<br><br>
+                        Please manually enter this QA gate data, or ensure the Excel file has:<br>
+                        - A column with sensor IDs or unit numbers<br>
+                        - A column with Pass/Fail status<br><br>
+                        <button onclick="manualEntry('${lotNumber}', '${gateType}')" class="btn btn-primary">Manual Entry</button>
+                    </div>
+                `;
+                statusDiv.innerHTML = '';
+                return;
+            }
+            
+            // Calculate yield
+            const yieldPct = totalSensors > 0 ? ((passedSensors / totalSensors) * 100).toFixed(2) : 0;
+            
+            // Show preview
+            const topFailures = Object.entries(failureReasons)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 5);
+            
+            previewDiv.innerHTML = `
+                <h3>Lot Report Detected: ${lotNumber}</h3>
+                <div class="alert" style="background: #d4edda; color: #155724;">
+                    <strong>✓ Successfully analyzed lot report</strong>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                    <div class="two-col">
+                        <div>
+                            <strong>Lot Number:</strong> ${lotNumber}<br>
+                            <strong>Gate Type:</strong> ${gateType || 'Unknown - please select'}<br>
+                            <strong>Date:</strong> ${new Date().toISOString().split('T')[0]}
+                        </div>
+                        <div>
+                            <strong>Total Sensors:</strong> ${totalSensors}<br>
+                            <strong>Passed:</strong> ${passedSensors} ✓<br>
+                            <strong>Failed:</strong> ${failedSensors} ✗<br>
+                            <strong>Yield:</strong> ${yieldPct}%
+                        </div>
+                    </div>
+                </div>
+                
+                ${topFailures.length > 0 ? `
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin: 20px 0;">
+                        <strong>Top Failure Modes:</strong><br>
+                        ${topFailures.map(([reason, count]) => 
+                            `<div style="margin: 5px 0;">• ${reason}: ${count} sensors (${((count/failedSensors)*100).toFixed(1)}%)</div>`
+                        ).join('')}
+                    </div>
+                ` : ''}
+                
+                <div style="margin: 20px 0;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600;">Time Spent (hours):</label>
+                    <input type="number" id="importTimeSpent" step="0.25" value="2" style="width: 150px; padding: 8px; border: 2px solid #dee2e6; border-radius: 6px;">
+                </div>
+                
+                ${!gateType ? `
+                    <div style="margin: 20px 0;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Select Gate Type:</label>
+                        <select id="importGateType" style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px;">
+                            <option value="">Select...</option>
+                            <option value="Dispensing (LN-Q)">Dispensing (LN-Q)</option>
+                            <option value="Screen Printing (LN-P)">Screen Printing (LN-P)</option>
+                            <option value="Outer Layer (LN-R)">Outer Layer (LN-R)</option>
+                            <option value="Final Inspection (LN-C)">Final Inspection (LN-C)</option>
+                            <option value="In Vitro (LN-AX)">In Vitro (LN-AX)</option>
+                        </select>
+                    </div>
+                ` : ''}
+                
+                <button onclick="confirmLotReportImport('${lotNumber}', '${gateType}', ${totalSensors}, ${passedSensors}, ${failedSensors}, '${JSON.stringify(topFailures).replace(/'/g, "\\'")}', '${filename}')" class="btn btn-primary" style="margin-top: 15px;">✓ Import This Lot Report</button>
+                <button onclick="cancelImport()" class="btn btn-secondary" style="margin-top: 15px;">Cancel</button>
+                
+                <details style="margin-top: 20px;">
+                    <summary style="cursor: pointer; font-weight: 600; color: #667eea;">Show sensor details (${sensorDetails.length} sensors)</summary>
+                    <div style="max-height: 300px; overflow-y: auto; margin-top: 10px; background: white; padding: 10px; border-radius: 4px;">
+                        ${sensorDetails.map(s => 
+                            `<div style="padding: 5px; border-bottom: 1px solid #eee;">
+                                ${s.id}: <strong style="color: ${s.status === 'PASS' ? '#28a745' : '#dc3545'}">${s.status}</strong>
+                                ${s.reason ? ` - ${s.reason}` : ''}
+                            </div>`
+                        ).join('')}
+                    </div>
+                </details>
+            `;
+            
+            statusDiv.innerHTML = '';
+        }
+
+        // Confirm lot report import
+        function confirmLotReportImport(lotNumber, gateType, totalSensors, passedSensors, failedSensors, topFailuresStr, filename) {
+            // Get user inputs
+            const timeSpent = parseFloat(document.getElementById('importTimeSpent').value) || 0;
+            const selectedGateType = document.getElementById('importGateType') ? 
+                document.getElementById('importGateType').value : gateType;
+            
+            if (!selectedGateType) {
+                alert('Please select a gate type!');
+                return;
+            }
+            
+            const topFailures = JSON.parse(topFailuresStr);
+            const failureModes = topFailures.map(f => f[0]);
+            
+            const yieldPct = totalSensors > 0 ? ((passedSensors / totalSensors) * 100).toFixed(2) : 0;
+            
+            const entry = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                gateType: selectedGateType,
+                lotNumber: lotNumber,
+                timeSpent: timeSpent,
+                totalSensors: totalSensors,
+                accepted: passedSensors,
+                rejected: failedSensors,
+                yieldPercentage: parseFloat(yieldPct),
+                smeCycles: 1,
+                blockers: [],
+                failureModes: failureModes,
+                notes: `Imported from lot report: ${filename}`
+            };
+            
+            const data = getData();
+            data.entries.push(entry);
+            saveData(data);
+            
+            document.getElementById('importStatus').innerHTML = 
+                `<div class="success-message">✓ Successfully imported lot report ${lotNumber}!</div>`;
+            document.getElementById('importPreview').innerHTML = '';
+            document.getElementById('fileInput').value = '';
+        }
+
+        // Manual entry from failed import
+        function manualEntry(lotNumber, gateType) {
+            switchTab('log-gate');
+            document.getElementById('lotNumber').value = lotNumber;
+            if (gateType) {
+                document.getElementById('gateType').value = gateType;
+                currentGateType = gateType;
+                renderFailureModes();
+            }
+        }
+
+        // Parse PDF (basic text extraction)
+        function parsePDF(file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const statusDiv = document.getElementById('importStatus');
+                const previewDiv = document.getElementById('importPreview');
+                
+                // Since we can't easily parse PDF in browser without heavy libraries,
+                // we'll extract text and look for patterns
+                statusDiv.innerHTML = '<div class="alert alert-info">PDF text extraction is limited. Looking for lot numbers and sensor data...</div>';
+                
+                // This is a simplified approach - looking for common patterns
+                const text = e.target.result;
+                const lotNumbers = text.match(/LN-[A-Z]+\d+/gi) || [];
+                const sensorCounts = text.match(/(\d+)\s*(sensors?|accepted|rejected)/gi) || [];
+                
+                previewDiv.innerHTML = `
+                    <div class="alert alert-info">
+                        <strong>Found in PDF:</strong><br>
+                        Lot Numbers: ${lotNumbers.join(', ') || 'None detected'}<br>
+                        Sensor mentions: ${sensorCounts.length}<br><br>
+                        <em>Note: PDF import is limited. For best results, manually enter data or use CSV/Excel format.</em>
+                    </div>
+                `;
+            };
+            reader.readAsText(file);
+        }
+
+        // Process imported data
+        function processImportedData(data, fileType) {
+            const statusDiv = document.getElementById('importStatus');
+            const previewDiv = document.getElementById('importPreview');
+            
+            if (!data || data.length === 0) {
+                statusDiv.innerHTML = '<div class="alert" style="background: #f8d7da; color: #721c24;">No data found in file.</div>';
+                return;
+            }
+
+            // Try to map common column names to our format
+            const mapped = data.map(row => {
+                return {
+                    date: row.Date || row.date || row.DATE || new Date().toISOString().split('T')[0],
+                    lotNumber: row['Lot Number'] || row.LotNumber || row.lot_number || row.LOT || '',
+                    gateType: row['Gate Type'] || row.GateType || row.gate_type || row.TYPE || '',
+                    totalSensors: parseInt(row['Total Sensors'] || row.TotalSensors || row.total || row.TOTAL || 0),
+                    accepted: parseInt(row.Accepted || row.accepted || row.ACCEPTED || row.Pass || row.pass || 0),
+                    timeSpent: parseFloat(row['Time (hours)'] || row.Time || row.time || row.HOURS || 0),
+                    notes: row.Notes || row.notes || row.NOTES || ''
+                };
+            }).filter(entry => entry.lotNumber); // Only keep rows with lot numbers
+
+            if (mapped.length === 0) {
+                statusDiv.innerHTML = '<div class="alert" style="background: #fff3cd; color: #856404;">Could not find standard columns. Please ensure your file has: Date, Lot Number, Gate Type, Total Sensors, Accepted.</div>';
+                return;
+            }
+
+            // Preview the data
+            previewDiv.innerHTML = `
+                <h3>Preview Imported Data (${mapped.length} entries)</h3>
+                <div class="alert" style="background: #d4edda; color: #155724;">
+                    Ready to import ${mapped.length} QA gate entries from ${fileType}.
+                </div>
+                <div style="max-height: 300px; overflow-y: auto; background: #f8f9fa; padding: 15px; border-radius: 6px;">
+                    ${mapped.slice(0, 10).map(entry => `
+                        <div style="margin-bottom: 10px; padding: 10px; background: white; border-radius: 4px;">
+                            <strong>${entry.lotNumber}</strong> - ${entry.gateType}<br>
+                            <small>${entry.accepted}/${entry.totalSensors} sensors | ${entry.timeSpent}h | ${entry.date}</small>
+                        </div>
+                    `).join('')}
+                    ${mapped.length > 10 ? '<p><em>...and ' + (mapped.length - 10) + ' more</em></p>' : ''}
+                </div>
+                <button onclick="confirmImport()" class="btn btn-primary" style="margin-top: 15px;">✓ Confirm Import</button>
+                <button onclick="cancelImport()" class="btn btn-secondary" style="margin-top: 15px;">Cancel</button>
+            `;
+
+            // Store for confirmation
+            window.pendingImport = mapped;
+            statusDiv.innerHTML = '';
+        }
+
+        function confirmImport() {
+            if (!window.pendingImport) return;
+
+            const data = getData();
+            const imported = window.pendingImport.map(entry => {
+                const rejected = entry.totalSensors - entry.accepted;
+                const yieldPct = entry.totalSensors > 0 ? ((entry.accepted / entry.totalSensors) * 100).toFixed(2) : 0;
+                
+                return {
+                    id: Date.now() + Math.random(),
+                    date: entry.date,
+                    gateType: entry.gateType,
+                    lotNumber: entry.lotNumber,
+                    timeSpent: entry.timeSpent || 0,
+                    totalSensors: entry.totalSensors,
+                    accepted: entry.accepted,
+                    rejected: rejected,
+                    yieldPercentage: parseFloat(yieldPct),
+                    smeCycles: 1,
+                    blockers: [],
+                    failureModes: [],
+                    notes: entry.notes || 'Imported from file'
+                };
+            });
+
+            data.entries.push(...imported);
+            saveData(data);
+
+            document.getElementById('importStatus').innerHTML = 
+                `<div class="success-message">✓ Successfully imported ${imported.length} QA gate entries!</div>`;
+            document.getElementById('importPreview').innerHTML = '';
+            window.pendingImport = null;
+
+            // Clear file input
+            document.getElementById('fileInput').value = '';
+        }
+
+        function cancelImport() {
+            document.getElementById('importStatus').innerHTML = '';
+            document.getElementById('importPreview').innerHTML = '';
+            window.pendingImport = null;
+            document.getElementById('fileInput').value = '';
+        }
+
+        // Log QA Gate
+        function logQAGate(event) {
+            event.preventDefault();
+
+            const totalSensors = parseInt(document.getElementById('totalSensors').value);
+            const accepted = parseInt(document.getElementById('acceptedSensors').value);
+            const rejected = totalSensors - accepted;
+            const yieldPct = totalSensors > 0 ? ((accepted / totalSensors) * 100).toFixed(2) : 0;
+
+            const entry = {
+                id: Date.now(),
+                date: document.getElementById('gateDate').value,
+                gateType: document.getElementById('gateType').value,
+                lotNumber: document.getElementById('lotNumber').value,
+                timeSpent: parseFloat(document.getElementById('timeSpent').value),
+                totalSensors: totalSensors,
+                accepted: accepted,
+                rejected: rejected,
+                yieldPercentage: parseFloat(yieldPct),
+                smeCycles: parseInt(document.getElementById('smeCycles').value),
+                blockers: [...selectedBlockers],
+                failureModes: [...selectedFailureModes],
+                notes: document.getElementById('notes').value
+            };
+
+            // Save to localStorage
+            const data = getData();
+            data.entries.push(entry);
+            saveData(data);
+
+            // Show success message
+            alert('✓ QA Gate logged successfully!');
+
+            // Reset form
+            document.getElementById('gateForm').reset();
+            selectedBlockers = [];
+            selectedFailureModes = [];
+            currentGateType = '';
+            renderBlockers();
+            renderFailureModes();
+            document.getElementById('gateDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Log Ticket
+        function logTicket(event) {
+            event.preventDefault();
+
+            const ticket = {
+                id: Date.now(),
+                date: document.getElementById('ticketDate').value,
+                ticketId: document.getElementById('ticketId').value,
+                category: document.getElementById('ticketCategory').value,
+                status: document.getElementById('ticketStatus').value,
+                assignedTo: document.getElementById('assignedTo').value,
+                description: document.getElementById('ticketDescription').value
+            };
+
+            const data = getData();
+            data.tickets.push(ticket);
+            saveData(data);
+
+            alert('✓ Ticket logged successfully!');
+            document.getElementById('ticketForm').reset();
+            document.getElementById('ticketDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        // Get data from localStorage
+        function getData() {
+            const stored = localStorage.getItem('qaGateData');
+            return stored ? JSON.parse(stored) : { entries: [], tickets: [] };
+        }
+
+        // Save data to localStorage
+        function saveData(data) {
+            localStorage.setItem('qaGateData', JSON.stringify(data));
+        }
+
+        // Update view data tab
+        function updateViewData() {
+            const data = getData();
+            
+            // Update stats
+            const totalGates = data.entries.length;
+            const totalTime = data.entries.reduce((sum, e) => sum + e.timeSpent, 0);
+            const totalTickets = data.tickets.length;
+            
+            let totalSensors = 0;
+            let totalAccepted = 0;
+            data.entries.forEach(e => {
+                totalSensors += e.totalSensors;
+                totalAccepted += e.accepted;
+            });
+            const avgYield = totalSensors > 0 ? ((totalAccepted / totalSensors) * 100).toFixed(1) : 0;
+
+            document.getElementById('totalGatesCount').textContent = totalGates;
+            document.getElementById('totalTimeCount').textContent = totalTime.toFixed(1);
+            document.getElementById('totalTicketsCount').textContent = totalTickets;
+            document.getElementById('avgYieldCount').textContent = avgYield + '%';
+
+            // Display recent gates
+            const gatesHtml = data.entries.slice(-10).reverse().map(entry => `
+                <div class="entry-item">
+                    <div class="entry-header">
+                        <span class="entry-title">${entry.lotNumber} (${entry.gateType})</span>
+                        <span class="entry-date">${entry.date}</span>
+                    </div>
+                    <div class="entry-details">
+                        Time: ${entry.timeSpent}h | Sensors: ${entry.accepted}/${entry.totalSensors} (${entry.yieldPercentage}% yield)
+                        ${entry.failureModes && entry.failureModes.length > 0 ? '<br>Failure Modes: ' + entry.failureModes.join(', ') : ''}
+                        ${entry.blockers.length > 0 ? '<br>Blockers: ' + entry.blockers.join(', ') : ''}
+                        ${entry.notes ? '<br>Notes: ' + entry.notes : ''}
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('recentGates').innerHTML = gatesHtml || '<p>No QA gates logged yet.</p>';
+
+            // Display recent tickets
+            const ticketsHtml = data.tickets.slice(-10).reverse().map(ticket => `
+                <div class="entry-item">
+                    <div class="entry-header">
+                        <span class="entry-title">${ticket.ticketId} - ${ticket.category}</span>
+                        <span class="entry-date">${ticket.date}</span>
+                    </div>
+                    <div class="entry-details">
+                        ${ticket.description}<br>
+                        Assigned to: ${ticket.assignedTo} | Status: ${ticket.status}
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('recentTickets').innerHTML = ticketsHtml || '<p>No tickets logged yet.</p>';
+        }
+
+        // Generate report
+        function generateReport() {
+            const data = getData();
+            const endDate = new Date(document.getElementById('reportEndDate').value);
+            const startDate = new Date(endDate);
+            startDate.setDate(startDate.getDate() - 7);
+
+            // Filter data for the week
+            const weekEntries = data.entries.filter(e => {
+                const entryDate = new Date(e.date);
+                return entryDate >= startDate && entryDate <= endDate;
+            });
+
+            const weekTickets = data.tickets.filter(t => {
+                const ticketDate = new Date(t.date);
+                return ticketDate >= startDate && ticketDate <= endDate;
+            });
+
+            const report = formatReport(weekEntries, weekTickets, startDate, endDate);
+            
+            const reportHtml = `<div class="report-output">${report}</div>`;
+            document.getElementById('reportContainer').innerHTML = reportHtml;
+
+            // Store report for download
+            window.currentReport = report;
+        }
+
+        // Format report
+        function formatReport(entries, tickets, startDate, endDate) {
+            let report = [];
+            report.push('='.repeat(70));
+            report.push('SAVA HEALTH - QA GATE WEEKLY REPORT');
+            report.push(`Report Period: ${startDate.toISOString().split('T')[0]} to ${endDate.toISOString().split('T')[0]}`);
+            report.push('='.repeat(70));
+
+            // Summary
+            const totalGates = entries.length;
+            const totalTime = entries.reduce((sum, e) => sum + e.timeSpent, 0);
+            const totalSensors = entries.reduce((sum, e) => sum + e.totalSensors, 0);
+            const totalAccepted = entries.reduce((sum, e) => sum + e.accepted, 0);
+            const totalRejected = entries.reduce((sum, e) => sum + e.rejected, 0);
+            const avgYield = totalSensors > 0 ? ((totalAccepted / totalSensors) * 100).toFixed(2) : 0;
+            const avgTime = totalGates > 0 ? (totalTime / totalGates).toFixed(2) : 0;
+
+            report.push('');
+            report.push('📊 SUMMARY STATISTICS');
+            report.push('-'.repeat(70));
+            report.push(`Total QA Gates Completed: ${totalGates}`);
+            report.push(`Total Time Spent: ${totalTime.toFixed(2)} hours`);
+            report.push(`Average Time per Gate: ${avgTime} hours`);
+            report.push(`Total Sensors Reviewed: ${totalSensors}`);
+            report.push(`  ✓ Accepted: ${totalAccepted}`);
+            report.push(`  ✗ Rejected: ${totalRejected}`);
+            report.push(`Overall Yield: ${avgYield}%`);
+
+            // By gate type
+            report.push('');
+            report.push('📋 QA GATES BY TYPE');
+            report.push('-'.repeat(70));
+
+            const byType = {};
+            entries.forEach(e => {
+                if (!byType[e.gateType]) {
+                    byType[e.gateType] = { count: 0, time: 0, sensors: 0, accepted: 0 };
+                }
+                byType[e.gateType].count++;
+                byType[e.gateType].time += e.timeSpent;
+                byType[e.gateType].sensors += e.totalSensors;
+                byType[e.gateType].accepted += e.accepted;
+            });
+
+            for (const [type, stats] of Object.entries(byType)) {
+                const yieldPct = stats.sensors > 0 ? ((stats.accepted / stats.sensors) * 100).toFixed(1) : 0;
+                report.push('');
+                report.push(`${type}:`);
+                report.push(`  Gates: ${stats.count} | Time: ${stats.time.toFixed(2)}h | Yield: ${yieldPct}%`);
+            }
+
+            // Blockers
+            report.push('');
+            report.push('🚧 BLOCKERS & CHALLENGES');
+            report.push('-'.repeat(70));
+
+            const allBlockers = [];
+            let smeRework = 0;
+            entries.forEach(e => {
+                allBlockers.push(...e.blockers);
+                if (e.smeCycles > 1) smeRework++;
+            });
+
+            if (allBlockers.length > 0) {
+                const blockerCounts = {};
+                allBlockers.forEach(b => {
+                    blockerCounts[b] = (blockerCounts[b] || 0) + 1;
+                });
+
+                Object.entries(blockerCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .forEach(([blocker, count]) => {
+                        report.push(`  • ${blocker}: ${count} occurrence(s)`);
+                    });
+            } else {
+                report.push('  No blockers reported this week! 🎉');
+            }
+
+            report.push('');
+            report.push(`QA Gates requiring SME rework: ${smeRework}/${totalGates}`);
+
+            // Tickets
+            report.push('');
+            report.push('🎫 TICKETS SUBMITTED');
+            report.push('-'.repeat(70));
+
+            if (tickets.length > 0) {
+                report.push(`Total tickets submitted: ${tickets.length}`);
+                report.push('');
+
+                const byCategory = {};
+                tickets.forEach(t => {
+                    if (!byCategory[t.category]) byCategory[t.category] = [];
+                    byCategory[t.category].push(t);
+                });
+
+                for (const [category, catTickets] of Object.entries(byCategory)) {
+                    report.push('');
+                    report.push(`${category} (${catTickets.length}):`);
+                    catTickets.forEach(t => {
+                        report.push(`  • ${t.ticketId} - ${t.description}`);
+                        report.push(`    Assigned to: ${t.assignedTo} | Status: ${t.status}`);
+                    });
+                }
+            } else {
+                report.push('  No tickets submitted this week');
+            }
+
+            // Detailed log
+            report.push('');
+            report.push('📝 DETAILED QA GATE LOG');
+            report.push('-'.repeat(70));
+
+            entries.sort((a, b) => a.date.localeCompare(b.date)).forEach(e => {
+                report.push('');
+                report.push(`${e.date} - ${e.lotNumber} (${e.gateType})`);
+                report.push(`  Time: ${e.timeSpent}h | Sensors: ${e.accepted}/${e.totalSensors} accepted (${e.yieldPercentage}% yield)`);
+                if (e.failureModes && e.failureModes.length > 0) {
+                    report.push(`  Failure Modes: ${e.failureModes.join(', ')}`);
+                }
+                if (e.blockers.length > 0) {
+                    report.push(`  Blockers: ${e.blockers.join(', ')}`);
+                }
+                if (e.notes) {
+                    report.push(`  Notes: ${e.notes}`);
+                }
+            });
+
+            // Recommendations
+            report.push('');
+            report.push('💡 RECOMMENDATIONS & ACTION ITEMS');
+            report.push('-'.repeat(70));
+
+            if (avgTime > 3) {
+                report.push('  • Average time per gate exceeds 3 hours - consider process optimization');
+            }
+            if (smeRework > totalGates * 0.3) {
+                report.push('  • High SME rework rate - standardize QCI criteria and failure modes');
+            }
+
+            report.push('');
+            report.push('='.repeat(70));
+
+            return report.join('\n');
+        }
+
+        // Download report
+        function downloadReport() {
+            if (!window.currentReport) {
+                alert('Please generate a report first!');
+                return;
+            }
+
+            const blob = new Blob([window.currentReport], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `QA_Weekly_Report_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Export all data
+        function exportData() {
+            const data = getData();
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `qa_gate_data_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (confirm('Are you sure you want to delete ALL data? This cannot be undone!')) {
+                localStorage.removeItem('qaGateData');
+                updateViewData();
+                alert('All data has been cleared.');
+            }
+        }
+    </script>
+    
+    <!-- Load SheetJS library for Excel support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</body>
+</html>
